@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesquisa sobre JavaScript</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link para o CSS externo -->
+</head>
+<body>
+    <h1>Explorando JavaScript</h1>
+
+    <h2>A) Assincronismo</h2>
+    <p>O assincronismo em JavaScript é uma maneira de executar tarefas que podem demorar um pouco, como chamadas de rede, sem travar o restante do código. Isso melhora a performance e a experiência do usuário.</p>
+
+    <h3>1) AJAX (Asynchronous Javascript And XML)</h3>
+    <p>AJAX é uma técnica que permite atualizar partes de uma página web sem precisar recarregá-la completamente. Aqui está um exemplo simples:</p>
+    <pre><code>
+const xhr = new XMLHttpRequest();
+xhr.open('GET', 'https://api.exemplo.com/dados', true);
+xhr.onload = function() {
+    if (xhr.status >= 200 && xhr.status < 300) {
+        console.log(xhr.responseText);
+    }
+};
+xhr.send();
+    </code></pre>
+
+    <h3>2) Promises</h3>
+    <p>Promises são objetos que representam um valor que pode estar disponível agora, no futuro ou nunca. Isso ajuda a organizar o código assíncrono. Veja um exemplo:</p>
+    <pre><code>
+const promessa = new Promise((resolve, reject) => {
+    const sucesso = true; // Simulando uma operação
+    if (sucesso) {
+        resolve('Tudo certo!');
+    } else {
+        reject('Algo deu errado.');
+    }
+});
+
+promessa.then(console.log).catch(console.error);
+    </code></pre>
+
+    <h3>3) Fetch API</h3>
+    <p>A Fetch API oferece uma forma mais moderna e fácil de fazer requisições de rede. Um exemplo prático:</p>
+    <pre><code>
+fetch('https://api.exemplo.com/dados')
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error('Erro:', error));
+    </code></pre>
+
+    <h3>4) Async / Await</h3>
+    <p>Com Async / Await, o código fica ainda mais limpo e fácil de entender. Veja como funciona:</p>
+    <pre><code>
+async function obterDados() {
+    try {
+        const response = await fetch('https://api.exemplo.com/dados');
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error('Erro:', error);
+    }
+}
+
+obterDados();
+    </code></pre>
+
+    <h3>5) Vantagens e Desvantagens</h3>
+    <ul>
+        <li><strong>AJAX:</strong> Fácil de usar, mas a sintaxe pode ser mais verbosa.</li>
+        <li><strong>Promises:</strong> Permitem encadear operações, mas podem ficar complexas se muito aninhadas.</li>
+        <li><strong>Fetch API:</strong> Interface moderna, mas não funciona em Internet Explorer.</li>
+        <li><strong>Async/Await:</strong> Código limpo e legível, mas requer um entendimento prévio de Promises.</li>
+    </ul>
+
+    <h2>B) Outros Tópicos</h2>
+
+    <h3>1) Hoisting</h3>
+    <p>Hoisting é o comportamento em JavaScript onde as declarações de variáveis e funções são "elevadas" para o topo do seu contexto. Isso significa que você pode usar uma variável ou função antes de declará-la.</p>
+
+    <h3>2) Arrow Functions</h3>
+    <p>As Arrow Functions são uma forma mais concisa de escrever funções. Elas também têm uma particularidade: não possuem seu próprio <code>this</code>, herdando-o do contexto onde foram criadas. Veja:</p>
+    <pre><code>
+const soma = (a, b) => a + b;
+    </code></pre>
+
+    <h3>3) Desestruturação (Destructuring)</h3>
+    <p>A desestruturação permite que você extraia valores de arrays ou objetos em variáveis separadas de forma mais fácil. Veja um exemplo:</p>
+    <pre><code>
+const pessoa = { nome: 'João', idade: 30 };
+const { nome, idade } = pessoa;
+console.log(nome, idade); // João 30
+    </code></pre>
+
+    <h3>4) Clojure</h3>
+    <p>Um closure é uma função que "lembra" o ambiente em que foi criada, mesmo após a execução desse ambiente. Isso permite acessar variáveis que estavam no escopo original. Um exemplo prático:</p>
+    <pre><code>
+function criarContador() {
+    let contador = 0;
+    return function() {
+        contador++;
+        return contador;
+    };
+}
+
+const contador = criarContador();
+console.log(contador()); // 1
+console.log(contador()); // 2
+    </code></pre>
+
+    <h1>Pesquisa de CEP</h1>
+    <div class="form-section">
+        <input type="text" id="cep" placeholder="Digite seu CEP" required>
+        <br>
+        <button onclick="loadDoc()">Pesquisar CEP - AJAX</button>
+        <button onclick="fetchCep()">Pesquisar CEP - Fetch API</button>
+        <button onclick="asyncFetchCep()">Pesquisar CEP - Async/Await</button>
+        <br><br>
+        <h2>Resultados</h2>
+        <input type="text" id="logradouro" placeholder="Logradouro" readonly>
+        <input type="text" id="complemento" placeholder="Complemento" readonly>
+        <input type="text" id="bairro" placeholder="Bairro" readonly>
+        <input type="text" id="localidade" placeholder="Cidade" readonly>
+        <input type="text" id="uf" placeholder="UF" readonly>
+    </div>
+
+    <script>
+        // AJAX
+        function loadDoc() {
+            const cep = document.getElementById("cep").value;
+            const xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState === 4 && this.status === 200) {
+                    const endereco = JSON.parse(this.responseText);
+                    populateFields(endereco);
+                }
+            };
+            xhttp.open("GET", `https://viacep.com.br/ws/${cep}/json/`, true);
+            xhttp.send();
+        }
+
+        // Fetch API
+        function fetchCep() {
+            const cep = document.getElementById("cep").value;
+            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Erro ao buscar CEP');
+                    return response.json();
+                })
+                .then(endereco => populateFields(endereco))
+                .catch(error => console.error('Erro:', error));
+        }
+
+        // Async/Await
+        async function asyncFetchCep() {
+            const cep = document.getElementById("cep").value;
+            try {
+                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                if (!response.ok) throw new Error('Erro ao buscar CEP');
+                const endereco = await response.json();
+                populateFields(endereco);
+            } catch (error) {
+                console.error('Erro:', error);
+            }
+        }
+
+        function populateFields(endereco) {
+            document.getElementById("logradouro").value = endereco.logradouro || '';
+            document.getElementById("complemento").value = endereco.complemento || '';
+            document.getElementById("bairro").value = endereco.bairro || '';
+            document.getElementById("localidade").value = endereco.localidade || '';
+            document.getElementById("uf").value = endereco.uf || '';
+        }
+    </script>
+</body>
+</html>
